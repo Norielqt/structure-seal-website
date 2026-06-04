@@ -86,7 +86,7 @@ function StepViewer({ sys }: { sys: System }) {
   )
 }
 
-function ServiceSection({ sys, i }: { sys: System; i: number }) {
+function ServiceSection({ sys }: { sys: System; i: number }) {
   const ref = useRef<HTMLDivElement>(null)
 
   const { scrollYProgress } = useScroll({
