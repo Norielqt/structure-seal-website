@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion'
 import { SYSTEMS } from '../data'
 import SectionLabel from './SectionLabel'
@@ -9,30 +9,31 @@ const expo = [0.16, 1, 0.3, 1] as const
 
 function StepViewer({ sys }: { sys: System }) {
   const [active, setActive] = useState(0)
+  const [loaded, setLoaded] = useState<Record<number, boolean>>({})
   const step = sys.steps[active]
+
+  useEffect(() => {
+    sys.steps.forEach((s, i) => {
+      const img = new window.Image()
+      img.onload = () => setLoaded(prev => ({ ...prev, [i]: true }))
+      img.src = s.image
+    })
+  }, [sys])
 
   return (
     <div className="border border-border rounded-xl overflow-hidden shadow-sm bg-white">
       {/* Image area */}
       <div className="relative aspect-[4/3] overflow-hidden bg-surface-2">
-        <div
-          className="absolute inset-0 flex flex-col items-center justify-center"
-          style={{
-            backgroundImage:
-              'repeating-linear-gradient(45deg, #e2e2e2 0, #e2e2e2 1px, #f0f0f0 0, #f0f0f0 50%)',
-            backgroundSize: '18px 18px',
-          }}
-        >
-          <p className="font-display text-3xl font-800 text-ink/20">Step {active + 1}</p>
-          <p className="text-sm text-ink/20 mt-1">{step.name}</p>
-          <p className="absolute bottom-3 right-3 text-xs text-ink/20">800 × 600</p>
-        </div>
+        {!loaded[active] && (
+          <div className="absolute inset-0 bg-surface-2 animate-pulse" />
+        )}
 
         <AnimatePresence mode="sync">
           <motion.img
             key={active}
             src={step.image}
             alt={step.name}
+            onLoad={() => setLoaded(prev => ({ ...prev, [active]: true }))}
             initial={{ opacity: 0, scale: 1.02 }}
             animate={{ opacity: 1, scale: 1, transition: { duration: 0.55, ease: expo } }}
             exit={{ opacity: 0, scale: 0.99, transition: { duration: 0.3, ease: [0.4, 0, 1, 1] } }}
