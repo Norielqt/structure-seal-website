@@ -1,3 +1,4 @@
+import LoadingScreen from './components/LoadingScreen'
 import Navbar from './components/Navbar'
 import Hero from './components/Hero'
 import Systems from './components/Systems'
@@ -9,6 +10,7 @@ import Contact from './components/Contact'
 export default function App() {
   return (
     <>
+      <LoadingScreen />
       <Navbar />
       <main>
         <Hero />
